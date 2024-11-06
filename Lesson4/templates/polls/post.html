@@ -1,0 +1,9 @@
+{% extends "polls/topic.html" %}
+
+{% block content %}
+    <ul>
+    {% for key, value in params.items %}
+        <li>{{key}} = {{value}}</li>
+    {% endfor %}
+    </ul>
+{% endblock content %}
