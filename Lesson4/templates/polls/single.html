@@ -1,11 +1,27 @@
 {% extends "polls/topic.html" %}
 
+{#{% block content %}#}
+{#    <div id="content" class="container">#}
+{#        <h1>{{ title }}</h1>#}
+{#        <ul>#}
+{#            {% if vote_form %}#}
+{#                <form action="{% url 'polls:vote' topic %}" method="post">#}
+{#                {% csrf_token %}#}
+{#                {{ vote_form }}#}
+{#                <input type="submit" value="Vote">#}
+{#                </form>#}
+{#            {% else %}#}
+{#                <p>No such poll '{{ topic }}'!</p>#}
+{#            {% endif %}#}
+{#        </ul>#}
+{#    </div>#}
+{#{% endblock %}#}
+
 {% block content %}
-    Currently open polls are:
-    <h1>{{ title }}</h1>
+    Recent polls:
     <ul>
-    {% for name, values in polls %}
-    <li><a href="{% url 'polls:poll' name %}">{{ values.question }}</a></li>
-{% endfor %}
+    {% for poll in polls %}
+        <li><a href="{% url 'polls:poll' poll.id %}">{{ poll.question_text }}</a></li>
+    {% endfor %}
     </ul>
 {% endblock %}
