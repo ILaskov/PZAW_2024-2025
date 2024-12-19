@@ -1,6 +1,5 @@
 from django import forms
-import json
-import os
+import json, os, requests
 from django.conf import settings
 
 class AppSelectForm(forms.Form):
@@ -12,10 +11,15 @@ class AppSelectForm(forms.Form):
     def __init__(self, search_query=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        file_path = os.path.join(settings.BASE_DIR, 'data', 'api.steampowered.com.json')
-
-        with open(file_path, 'r') as file:
-            data = json.load(file)
+        url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            games = data.get('applist', {}).get('data', {})
+        except requests.RequestException as e:
+            games = []
+            self.fields['app_choice'].choices = [('', f"Error fetching games: {str(e)}")]
 
         apps = data['applist']['apps']
 

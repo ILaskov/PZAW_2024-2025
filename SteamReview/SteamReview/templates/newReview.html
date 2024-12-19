@@ -15,5 +15,35 @@
         {{ form.as_p }}
         <button type="submit">Select</button>
     </form>
+
+    <div>
+        {% if game_details %}
+            <h2>Game Details</h2>
+            {% if game_details.error %}
+                <p>Error: {{ game_details.error }}</p>
+            {% else %}
+                <h3>{{ game_details.name }}</h3>
+                <p><strong>Description:</strong> {{ game_details.short_description }}</p>
+                <p>
+                    <strong>Genres:</strong>
+                    {% for genre in game_details.genres %}
+                        {{ genre.description }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p>
+                    <strong>Price:</strong>
+                    {% if game_details.price_overview %}
+                        {{ game_details.price_overview.final_formatted }}
+                    {% else %}
+                        Free
+                    {% endif %}
+                </p>
+                <p><strong>Release Date:</strong> {{ game_details.release_date.date }}</p>
+                <p><strong>Developer:</strong> {{ game_details.developers.0 }}</p>
+                <p><strong>Publishers:</strong> {{ game_details.publishers.0 }}</p>
+                <img src="{{ game_details.header_image }}" alt="{{ game_details.name }}" style="max-width: 300px;" />
+            {% endif %}
+        {% endif %}
+    </div>
 </body>
 </html>
