@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .forms import AppSelectForm
 
 def index(request):
     photo_data = {
@@ -16,3 +17,9 @@ def index(request):
         'photo_12': 'https://picsum.photos/seed/12/300/400',
     }
     return render(request, 'index.html', photo_data)
+
+def newReview(request):
+    search_query = request.GET.get('q', '')
+    form = AppSelectForm(search_query=search_query)
+
+    return render(request, 'newReview.html', {'form': form})

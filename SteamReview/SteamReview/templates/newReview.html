@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Game</title>
+</head>
+<body>
+    <form method="get">
+        <label for="search">Search for Game:</label>
+        <input type="text" id="search" name="q" value="{{ request.GET.q }}">
+        <button type="submit">Search</button>
+    </form>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Select</button>
+    </form>
+</body>
+</html>
