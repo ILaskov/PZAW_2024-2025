@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import AppSelectForm
-import requests
+import requests, markdown
 
 def index(request):
     photo_data = {
@@ -23,9 +23,12 @@ def newReview(request):
     search_query = request.GET.get('q', '')
     form = AppSelectForm(search_query=search_query)
     game_details = None
+    formatted_text = None
 
     if request.method == 'POST':
         app_id = request.POST.get('app_choice')
+        review_text = request.POST.get('review_text')
+
         if app_id:
             url = f"http://store.steampowered.com/api/appdetails?appids={app_id}"
             try:
@@ -36,5 +39,7 @@ def newReview(request):
             except requests.RequestException as e:
                 game_details = {'error': str(e)}
 
+        if review_text:
+            formatted_text = markdown.markdown(review_text)
 
-    return render(request, 'newReview.html', {'form': form, 'game_details': game_details})
+    return render(request, 'newReview.html', {'form': form, 'game_details': game_details, 'formatted_text': formatted_text})

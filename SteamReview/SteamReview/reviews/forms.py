@@ -1,6 +1,5 @@
 from django import forms
 import json, os, requests
-from django.conf import settings
 
 class AppSelectForm(forms.Form):
     app_choice = forms.ChoiceField(
