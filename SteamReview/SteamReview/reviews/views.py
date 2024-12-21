@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import AppSelectForm
 import requests, markdown
+from .models import Review
 
 def index(request):
     photo_data = {
@@ -24,22 +25,51 @@ def newReview(request):
     form = AppSelectForm(search_query=search_query)
     game_details = None
     formatted_text = None
+    # rating = None
 
     if request.method == 'POST':
-        app_id = request.POST.get('app_choice')
-        review_text = request.POST.get('review_text')
+        if 'app_choice' in request.POST:
+            app_id = request.POST.get('app_choice')
 
-        if app_id:
-            url = f"http://store.steampowered.com/api/appdetails?appids={app_id}"
-            try:
-                response = requests.get(url, timeout=10)
-                response.raise_for_status()
-                api_data = response.json()
-                game_details = api_data.get(app_id, {}).get('data', {})
-            except requests.RequestException as e:
-                game_details = {'error': str(e)}
+            if app_id:
+                url = f"http://store.steampowered.com/api/appdetails?appids={app_id}"
+                try:
+                    response = requests.get(url, timeout=10)
+                    response.raise_for_status()
+                    api_data = response.json()
+                    game_details = api_data.get(app_id, {}).get('data', {})
+                except requests.RequestException as e:
+                    game_details = {'error': str(e)}
 
-        if review_text:
-            formatted_text = markdown.markdown(review_text)
+                return render(request, 'newReview.html', {
+                    'form': form,
+                    'game_details': game_details,
+                    'app_id': app_id,
+                })
+        else:
+            app_id = request.POST.get('app_id')
+            review_text = request.POST.get('review_text')
+            # rating = request.POST.get('rating')
 
-    return render(request, 'newReview.html', {'form': form, 'game_details': game_details, 'formatted_text': formatted_text})
+            if review_text:
+                formatted_text = markdown.markdown(review_text)
+                app_name = request.POST.get('app_name', "Unknown Game")
+
+                review = Review.objects.create(
+                    app_id=app_id,
+                    app_name=app_name,
+                    review_text=formatted_text,
+                    # rating=rating,
+                )
+                return redirect('review_detail', pk=review.pk)
+
+    return render(request, 'newReview.html', {
+        'form': form,
+        'game_details': game_details,
+        'formatted_text': formatted_text,
+        # 'rating': rating
+    })
+
+def review_detail(request, pk):
+    review = get_object_or_404(Review, pk=pk)
+    return render(request, 'review.html', {'review': review})

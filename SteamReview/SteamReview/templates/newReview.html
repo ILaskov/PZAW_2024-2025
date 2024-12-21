@@ -1,7 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Select Game</title>
+{#    <link rel="stylesheet" href="{% static 'css/output.css' %}" type="text/css">#}
 </head>
 <body>
     <form method="get">
@@ -9,19 +11,40 @@
         <input type="text" id="search" name="q" value="{{ request.GET.q }}">
         <button type="submit">Search</button>
     </form>
-    
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Select</button>
     </form>
-    
+
     <form method="post">
         {% csrf_token %}
         <div>
             <label for="review_text">Your Review:</label>
             <textarea id="review_text" name="review_text" rows="5" class="form-control" placeholder="Write your review here...">{{ request.POST.review_text }}</textarea>
         </div>
+
+        <input type="hidden" name="app_id" value="{{ app_id }}">
+        <input type="hidden" name="app_name" value="{{ game_details.name }}">
+
+{#        <div class="mb-4 flex space-x-4">#}
+{#            <input type="radio" id="rating-++" name="rating" value="++" {% if request.POST.rating == '++' %}checked{% endif %} class="hidden" />#}
+{#            <label for="rating-++" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '++' %}bg-green-500 text-white{% endif %}">++</label>#}
+{##}
+{#            <input type="radio" id="rating-+" name="rating" value="+" {% if request.POST.rating == '+' %}checked{% endif %} class="hidden" />#}
+{#            <label for="rating-+" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '+' %}bg-green-500 text-white{% endif %}">+</label>#}
+{##}
+{#            <input type="radio" id="rating-+-" name="rating" value="+-" {% if request.POST.rating == '+-' %}checked{% endif %} class="hidden" />#}
+{#            <label for="rating-+-" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '+-' %}bg-green-500 text-white{% endif %}">+-</label>#}
+{##}
+{#            <input type="radio" id="rating--" name="rating" value="-" {% if request.POST.rating == '-' %}checked{% endif %} class="hidden" />#}
+{#            <label for="rating--" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '-' %}bg-green-500 text-white{% endif %}">-</label>#}
+{##}
+{#            <input type="radio" id="rating---" name="rating" value="--" {% if request.POST.rating == '--' %}checked{% endif %} class="hidden" />#}
+{#            <label for="rating---" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '--' %}bg-green-500 text-white{% endif %}">--</label>#}
+{#        </div>#}
+
         <button type="submit">Submit Review</button>
     </form>
 

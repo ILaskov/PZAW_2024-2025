@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ review.app_name }} Review</title>
+</head>
+<body class="bg-gray-100 p-6">
+    <h1 class="text-2xl font-bold mb-4">Review for {{ review.app_name }}</h1>
+
+{#    <p class="mb-2"><strong>Rating:</strong> {{ review.rating }}</p>#}
+    <p class="mb-2"><strong>Review:</strong></p>
+    <div class="border p-4 bg-white rounded-md">
+        {{ review.review_text }}
+    </div>
+
+    <p class="text-sm text-gray-500 mt-4">Posted on {{ review.timestamp }}</p>
+
+    <a href="{% url 'newReview' %}" class="inline-block mt-6 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Write Another Review</a>
+</body>
+</html>
