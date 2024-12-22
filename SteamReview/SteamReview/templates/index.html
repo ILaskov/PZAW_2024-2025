@@ -3,60 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Grid with Tailwind CSS</title>
+    <title>Steam Review+</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/output.css' %}" type="text/css"> <!-- We add the output Tailwind CSS here -->
+{#    <link rel="stylesheet" href="{% static 'css/output.css' %}" type="text/css"> #}
 </head>
 <body class="h-screen flex justify-center items-center">
-
-<div class="w-3/5 m-auto">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="grid gap-4">
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow shadow-lg" src="{{ photo_1 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_2 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_3 }}" alt="">
-            </div>
-        </div>
-        <div class="grid gap-4">
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_4 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_5 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_6 }}" alt="">
-            </div>
-        </div>
-        <div class="grid gap-4">
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_7 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_8 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_9 }}" alt="">
-            </div>
-        </div>
-        <div class="grid gap-4">
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_10 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_11 }}" alt="">
-            </div>
-            <div>
-                <img class="h-auto max-w-full rounded-lg shadow" src="{{ photo_12 }}" alt="">
-            </div>
-        </div>
+    <div class="flex justify-between items-center mb-6">
+        <a href="{% url 'newReview' %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+            Create New Review
+        </a>
     </div>
-</div>
+    <div class="grid grid-cols-1 gap-4">
+        {% for review in reviews %}
+            <div class="p-4 bg-white rounded-md shadow-md hover:shadow-lg transition">
+                <p class="text-gray-600 truncate">{{ review.review_text|safe }}</p>
+                <p>{{ review.app_name }}</p>
+                <p><strong>Developers:</strong> {{ review.app_developers }}</p>
+                <img src="{{ review.image_url }}" alt="{{ review.app_name }}" style="max-width: 300px;" />
+                <a href="{% url 'review_detail' review.pk %}" class="text-blue-500 hover:underline">
+                    Read More
+                </a>
+                <p class="text-sm text-gray-500 mt-2">Posted on {{ review.timestamp }}</p>
+            </div>
+        {% empty %}
+            <p class="text-gray-500">No reviews available.</p>
+        {% endfor %}
+    </div>
 
 </body>
 </html>
