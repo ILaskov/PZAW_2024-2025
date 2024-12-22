@@ -53,11 +53,9 @@ def newReview(request):
 
             if review_text:
                 formatted_text = markdown.markdown(review_text)
-                app_name = request.POST.get('app_name', "Unknown Game")
 
                 review = Review.objects.create(
                     app_id=app_id,
-                    app_name=app_name,
                     review_text=formatted_text,
                     # rating=rating,
                 )
@@ -72,4 +70,15 @@ def newReview(request):
 
 def review_detail(request, pk):
     review = get_object_or_404(Review, pk=pk)
-    return render(request, 'review.html', {'review': review})
+
+    if review.app_id:
+        url = f"http://store.steampowered.com/api/appdetails?appids={review.app_id}"
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            api_data = response.json()
+            game_details = api_data.get(review.app_id, {}).get('data', {})
+        except requests.RequestException as e:
+            game_details = {'error': str(e)}
+
+    return render(request, 'review.html', {'review': review, 'game_details':game_details})
