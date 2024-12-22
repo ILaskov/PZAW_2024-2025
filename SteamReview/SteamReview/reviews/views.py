@@ -12,7 +12,7 @@ def newReview(request):
     form = AppSelectForm(search_query=search_query)
     game_details = None
     formatted_text = None
-    # rating = None
+    rating = None
 
     if request.method == 'POST':
         if 'app_choice' in request.POST:
@@ -36,7 +36,7 @@ def newReview(request):
         else:
             app_id = request.POST.get('app_id')
             review_text = request.POST.get('review_text')
-            # rating = request.POST.get('rating')
+            rating = request.POST.get('rating')
 
             if review_text:
                 formatted_text = markdown.markdown(review_text)
@@ -60,7 +60,7 @@ def newReview(request):
                         app_developers=app_developers,
                         image_url=image_url,
                         review_text=formatted_text,
-                        # rating=rating,
+                        rating=rating,
                     )
                     return redirect('review_detail', pk=review.pk)
 
@@ -68,7 +68,7 @@ def newReview(request):
         'form': form,
         'game_details': game_details,
         'formatted_text': formatted_text,
-        # 'rating': rating
+        'rating': rating
     })
 
 def review_detail(request, pk):

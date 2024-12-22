@@ -16,6 +16,7 @@
     <div class="grid grid-cols-1 gap-4">
         {% for review in reviews %}
             <div class="p-4 bg-white rounded-md shadow-md hover:shadow-lg transition">
+                <p class="mb-2"><strong>Rating:</strong> {{ review.rating }}</p>
                 <p class="text-gray-600 truncate">{{ review.review_text|safe }}</p>
                 <p>{{ review.app_name }}</p>
                 <p><strong>Developers:</strong> {{ review.app_developers }}</p>

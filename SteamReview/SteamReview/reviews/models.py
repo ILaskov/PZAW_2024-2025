@@ -6,7 +6,7 @@ class Review(models.Model):
     app_developers = models.CharField(max_length=100, blank=True, null=True)
     image_url = models.CharField(max_length=255, blank=True, null=True)
     review_text = models.TextField()
-    # rating = models.CharField(max_length=10)
+    rating = models.CharField(max_length=10, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
