@@ -1,6 +1,8 @@
 from django.db import models
 
+#Making review class
 class Review(models.Model):
+    #Everthin that this class includes
     app_id = models.CharField(max_length=100)
     app_name = models.CharField(max_length=100, blank=True, null=True)
     app_developers = models.CharField(max_length=100, blank=True, null=True)

@@ -6,60 +6,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Game</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}" type="text/css">
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const ratingInputs = document.querySelectorAll('input[name="rating"]');
+            const ratingLabels = document.querySelectorAll('label[for^="rating"]');
+
+            function updateStyles() {
+                // Reset styles for all labels
+                ratingLabels.forEach(label => {
+                    label.classList.remove(
+                        "bg-green-600", "bg-green-400", "bg-yellow-400",
+                        "bg-red-400", "bg-red-600", "text-white"
+                    );
+                    label.classList.add("bg-gray-200");
+                });
+
+                // Apply styles to the selected label
+                const selected = document.querySelector('input[name="rating"]:checked');
+                if (selected) {
+                    const label = document.querySelector(`label[for="${selected.id}"]`);
+                    if (label) {
+                        label.classList.remove("bg-gray-200");
+                        label.classList.add(
+                            selected.value === "++" ? "bg-green-600" :
+                            selected.value === "+" ? "bg-green-400" :
+                            selected.value === "+-" ? "bg-yellow-400" :
+                            selected.value === "-" ? "bg-red-400" : "bg-red-600",
+                            "text-white"
+                        );
+                    }
+                }
+            }
+
+            // Attach event listeners to inputs
+            ratingInputs.forEach(input => {
+                input.addEventListener("change", updateStyles);
+            });
+
+            // Initial update for pre-selected values
+            updateStyles();
+        });
+    </script>
 </head>
-<body>
-    <form method="get">
-        <label for="search">Search for Game:</label>
+<body class="font-sans bg-sky-950 flex">
+<div class="basis-4/5">
+    {# Searching for game #}
+    <form method="get" class="bg-sky-800 flex flex-col p-6 m-6 rounded-lg w-64">
+        <label for="search" class="text-white mb-2">Search for Game:</label>
         <input type="text" id="search" name="q" value="{{ request.GET.q }}">
-        <button type="submit">Search</button>
+        <button type="submit" class="h-6 w-16 mt-3 ml-2 rounded-lg text-white transition duration-500 ease-in-out bg-blue-500 hover:bg-green-500 transform hover:-translate-y-1 hover:scale-110">Search</button>
     </form>
 
-    <form method="post">
+    {# Selecting game #}
+    <form method="post" class="bg-sky-800 flex flex-col p-6 m-6 rounded-lg w-1/3">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Select</button>
+        <label for="form.app_choice.label_tag" class="text-white mb-2">{{ form.app_choice.label }}</label>
+        {{ form.app_choice }}
+        <button type="submit" class="h-6 w-16 mt-3 ml-2 rounded-lg text-white transition duration-500 ease-in-out bg-blue-500 hover:bg-green-500 transform hover:-translate-y-1 hover:scale-110">Select</button>
     </form>
 
+    {# Ratings for games #}
     <form method="post">
         {% csrf_token %}
-        
-        <div class="mb-4 flex space-x-4">
-            <input type="radio" id="rating-++" name="rating" value="++" {% if request.POST.rating == '++' %}checked{% endif %} class="hidden" />
-            <label for="rating-++" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '++' %}bg-green-500 text-white{% endif %}">++</label>
+        <div class="m-6 flex space-x-4">
+            <input type="radio" id="rating++" name="rating" value="++" {% if request.POST.rating == '++' %}checked{% endif %} class="hidden" />
+            <label for="rating++" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-600 hover:text-white transition duration-200 ease-in-out">++</label>
 
-            <input type="radio" id="rating-+" name="rating" value="+" {% if request.POST.rating == '+' %}checked{% endif %} class="hidden" />
-            <label for="rating-+" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '+' %}bg-green-500 text-white{% endif %}">+</label>
+            <input type="radio" id="rating+" name="rating" value="+" {% if request.POST.rating == '+' %}checked{% endif %} class="hidden" />
+            <label for="rating+" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out">+</label>
 
-            <input type="radio" id="rating-+-" name="rating" value="+-" {% if request.POST.rating == '+-' %}checked{% endif %} class="hidden" />
-            <label for="rating-+-" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '+-' %}bg-green-500 text-white{% endif %}">+-</label>
+            <input type="radio" id="rating+-" name="rating" value="+-" {% if request.POST.rating == '+-' %}checked{% endif %} class="hidden" />
+            <label for="rating+-" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-yellow-400 hover:text-white transition duration-200 ease-in-out">+-</label>
 
-            <input type="radio" id="rating--" name="rating" value="-" {% if request.POST.rating == '-' %}checked{% endif %} class="hidden" />
-            <label for="rating--" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '-' %}bg-green-500 text-white{% endif %}">-</label>
+            <input type="radio" id="rating-" name="rating" value="-" {% if request.POST.rating == '-' %}checked{% endif %} class="hidden" />
+            <label for="rating-" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-red-400 hover:text-white transition duration-200 ease-in-out">-</label>
 
-            <input type="radio" id="rating---" name="rating" value="--" {% if request.POST.rating == '--' %}checked{% endif %} class="hidden" />
-            <label for="rating---" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-green-400 hover:text-white transition duration-200 ease-in-out {% if request.POST.rating == '--' %}bg-green-500 text-white{% endif %}">--</label>
+            <input type="radio" id="rating--" name="rating" value="--" {% if request.POST.rating == '--' %}checked{% endif %} class="hidden" />
+            <label for="rating--" class="cursor-pointer px-6 py-2 rounded-md bg-gray-200 text-center hover:bg-red-600 hover:text-white transition duration-200 ease-in-out">--</label>
         </div>
-        
-        <div>
-            <label for="review_text">Your Review:</label>
+
+        {# Area to write your review #}
+        <div class="bg-sky-800 flex flex-col p-6 m-6 rounded-lg w-3/4">
+            <label for="review_text" class="text-white mb-2">Your Review:</label>
             <textarea id="review_text" name="review_text" rows="5" class="form-control" placeholder="Write your review here...">{{ request.POST.review_text }}</textarea>
         </div>
-
+        {# Inputs that store the information of what game was selected for other forms #}
         <input type="hidden" name="app_id" value="{{ app_id }}">
         <input type="hidden" name="app_name" value="{{ game_details.name }}">
-
-        <button type="submit">Submit Review</button>
+        {# Button to submit your review #}
+        <button type="submit" class="h-6 w-36 h-8 ml-6 rounded-lg text-white text-center transition duration-500 ease-in-out bg-blue-500 hover:bg-green-500 transform hover:-translate-y-1 hover:scale-110">Submit Review</button>
     </form>
-
-    <a href="{% url 'index' %}" class="inline-block mt-6 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Back</a>
-
-    <div>
+    {# Button to get you back to main page #}
+    <a href="{% url 'index' %}" class="inline-block m-3 ml-6 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">Back</a>
+</div>
+        {# Game details #}
         {% if game_details %}
-            <h2>Game Details</h2>
+            <div class="basis-1/3 text-white flex flex-col bg-sky-800 rounded-lg m-6 p-6 justify-evenly">
+            <p class="text-2xl"><strong>Game Details</strong></p>
             {% if game_details.error %}
                 <p>Error: {{ game_details.error }}</p>
             {% else %}
-                <h3>{{ game_details.name }}</h3>
+                <p class="text-xl"><strong>{{ game_details.name }}</strong></p>
                 <p><strong>Description:</strong> {{ game_details.short_description }}</p>
                 <p>
                     <strong>Genres:</strong>
@@ -78,9 +125,10 @@
                 <p><strong>Release Date:</strong> {{ game_details.release_date.date }}</p>
                 <p><strong>Developer:</strong> {{ game_details.developers.0 }}</p>
                 <p><strong>Publishers:</strong> {{ game_details.publishers.0 }}</p>
-                <img src="{{ game_details.header_image }}" alt="{{ game_details.name }}" style="max-width: 300px;" />
+                <img src="{{ game_details.header_image }}" alt="{{ game_details.name }}" class="w-auto rounded-lg"/>
             {% endif %}
+            </div>
         {% endif %}
-    </div>
+    
 </body>
 </html>

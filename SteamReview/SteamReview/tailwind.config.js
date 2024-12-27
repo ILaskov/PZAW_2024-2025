@@ -4,7 +4,13 @@ module.exports = {
         './templates/*.html',
     ],
     theme: {
-        extend: {},
+        extend: {
+            lineClamp: {
+                12: '12',
+            }
+        },
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/line-clamp'),
+    ],
 }
