@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import AppSelectForm
-import requests, markdown
+from .forms import AppSelectForm, RegistrationForm
+import requests, markdown, hashlib
 from .models import Review
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 #Creating main page with all reviews ordered by date
 def index(request):
@@ -9,6 +13,7 @@ def index(request):
     return render(request, 'index.html', {'reviews': reviews})
 
 #Creating page where you make reviews
+@login_required
 def newReview(request):
     search_query = request.GET.get('q', '')
     form = AppSelectForm(search_query=search_query)
@@ -59,6 +64,7 @@ def newReview(request):
                         app_name = game_details.get('name')
                         app_developers = ', '.join(game_details.get('developers', []))
                         image_url = game_details.get('header_image')
+                        user = request.user
                     except requests.RequestException as e:
                         game_details = {'error': str(e)}
 
@@ -70,6 +76,7 @@ def newReview(request):
                         image_url=image_url,
                         review_text=formatted_text,
                         rating=rating,
+                        user=user,
                     )
 
                     #Redirect to page with review
@@ -100,3 +107,52 @@ def review_detail(request, pk):
 
     #Rendering site with all necessary data
     return render(request, 'review.html', {'review': review, 'game_details':game_details})
+
+#Creating a site that user can register in
+def register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        #Checks if everything was filled
+        if not username or not password or not confirm_password:
+            return render(request, 'register.html', {'error': 'All fields are required.'})
+
+        #Checks if passwords match
+        if password != confirm_password:
+            return render(request, 'register.html', {'error': 'Passwords do not match.'})
+
+        #Checks if the username is already taken
+        if User.objects.filter(username=username).exists():
+            return render(request, 'register.html', {'error': 'Username already exists.'})
+
+        #Create a new user with hashed password
+        user = User.objects.create(
+            username=username,
+            #Hashing the password
+            password=make_password(password)
+        )
+        user.save()
+
+        #Redirect to the login page after successful registration
+        return redirect('login')
+    return render(request, 'register.html')
+
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        #Authenticate the user
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            #Log the user in
+            login(request, user)
+            #Redirect to the home page
+            return redirect('index')
+        else:
+            return render(request, 'login.html', {'error': 'Invalid username or password.'})
+
+    return render(request, 'login.html')
